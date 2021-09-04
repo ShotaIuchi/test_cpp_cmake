@@ -11,8 +11,18 @@ include_directories(glm)
 link_directories(/usr/local/lib) # vulkan
 link_directories(/opt/homebrew/Cellar/glfw/3.3.4/lib)
 
-add_executable(app main.cpp XXFramework.cpp)
-add_subdirectory(imgui)
+add_executable(app
+    main.cpp
+    XXFramework.cpp
+    imgui.cpp
+    imgui_draw.cpp
+    imgui_tables.cpp
+    imgui_widgets.cpp
+    imgui_impl_glfw.cpp
+    imgui_impl_vulkan.cpp
+    imgui_demo.cpp
+)
+# add_subdirectory(imgui)
 
 target_link_libraries(app libvulkan.1.2.189.dylib libvulkan.1.dylib libglfw.3.dylib)
 
