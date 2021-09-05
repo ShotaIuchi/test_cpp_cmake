@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 project(test VERSION 0.1.0)
 
 # set(CMAKE_CXX_FLAGS "-O0 -std=c++14 -Wall")
-set(CMAKE_CXX_FLAGS "-O0 -std=c++11")
+set(CMAKE_CXX_FLAGS "-O0 -std=c++17")
 
 include_directories(/usr/local/include) # vulkan
 include_directories(/opt/homebrew/Cellar/glfw/3.3.4/include)
