@@ -19,6 +19,8 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
+#include "MainInternal.hpp"
+
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
 // Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
@@ -477,6 +479,9 @@ int main(int, char **)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    MainInternal main;
+    main.init();
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -542,6 +547,8 @@ int main(int, char **)
                 show_another_window = false;
             ImGui::End();
         }
+
+        main.loop();
 
         // Rendering
         ImGui::Render();
