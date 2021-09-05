@@ -5,68 +5,77 @@
 #include "DataOriginal.hpp"
 #include "DataHash.hpp"
 
-void MIInit(DataTypeA_Hash *data, DataOriginal *src)
+template <class T>
+void MIItem(T *src, const DataTypeHashBase *const item)
 {
+    bool isCheck = false;
+    ImGui::Checkbox(item->name().c_str(), &isCheck);
+    if (isCheck)
+    {
+        if (item->type() == typeid(int))
+        {
+            std::cout << item->name() << " >> " << *(int *)item->get(src) << std::endl;
+        }
+        else if (item->type() == typeid(float))
+        {
+            std::cout << item->name() << " >> " << *(float *)item->get(src) << std::endl;
+        }
+        else if (item->type() == typeid(short))
+        {
+            std::cout << item->name() << " >> " << *(short *)item->get(src) << std::endl;
+        }
+    }
+}
+
+void MIInit(DataTypeA *src)
+{
+    DataHash::DataTypeA_Hash data;
     ImGui::SetNextItemOpen(true);
     if (ImGui::TreeNode("DataTypeA"))
     {
-        // ImGui::Indent();
-        for (const auto &item : data->values)
+        for (const auto &item : data.values)
         {
-            bool isCheck = false;
-            ImGui::Checkbox(item->name().c_str(), &isCheck);
-            if (isCheck)
-            {
-                std::cout << item->name() << *(double *)item->get(src) << std::endl;
-            }
+            MIItem(src, item);
         }
         ImGui::TreePop();
     }
 }
-void MIInit(DataTypeB_Hash::AAA_Hash *data, DataOriginal *src)
+void MIInit(DataTypeB::AAA *src)
 {
+    DataHash::DataTypeB_Hash::AAA_Hash data;
     ImGui::SetNextItemOpen(true);
     if (ImGui::TreeNode("AAA"))
     {
-        for (const auto &item : data->values)
+        for (const auto &item : data.values)
         {
-            bool isCheck = false;
-            ImGui::Checkbox(item->name().c_str(), &isCheck);
-            if (isCheck)
-            {
-                std::cout << item->name() << " >> " << *(double *)item->get(src) << std::endl;
-            }
+            MIItem(src, item);
         }
         ImGui::TreePop();
     }
 }
-void MIInit(DataTypeB_Hash::BBB_Hash *data, int index, DataOriginal *src)
+void MIInit(DataTypeB::BBB *src, int index)
 {
+    DataHash::DataTypeB_Hash::BBB_Hash data;
     ImGui::SetNextItemOpen(true);
     if (ImGui::TreeNode(("BBB[" + std::to_string(index) + "]").c_str()))
     {
-        for (const auto &item : data->values)
+        for (const auto &item : data.values)
         {
-            bool isCheck = false;
-            ImGui::Checkbox(item->name().c_str(), &isCheck);
-            if (isCheck)
-            {
-                std::cout << item->name() << " >> " << *(double *)item->get(src) << std::endl;
-            }
+            MIItem(src, item);
         }
         ImGui::TreePop();
     }
 }
-void MIInit(DataTypeB_Hash *data, DataOriginal *src)
+void MIInit(DataTypeB *src)
 {
     ImGui::SetNextItemOpen(true);
     if (ImGui::TreeNode("DataTypeB"))
     {
-        MIInit(&data->aaa, src);
-        MIInit(&data->bbb[0], 0, src);
-        MIInit(&data->bbb[1], 1, src);
-        MIInit(&data->bbb[2], 2, src);
-        MIInit(&data->bbb[3], 3, src);
+        MIInit(&src->aaa);
+        MIInit(&src->bbb[0], 0);
+        MIInit(&src->bbb[1], 1);
+        MIInit(&src->bbb[2], 2);
+        MIInit(&src->bbb[3], 3);
         ImGui::TreePop();
     }
 }
@@ -82,14 +91,9 @@ void MainInternal::init()
 
 void MainInternal::loop()
 {
-    DataHash hash;
     DataOriginal o;
-
     ImGui::Begin("aaaa");
-    MIInit(&hash.dataA, &o);
-    MIInit(&hash.dataB, &o);
-
-    ImGui::Separator();
-    MIInit(&hash.dataB.bbb[0], 0, &o);
+    MIInit(&o.dataA);
+    MIInit(&o.dataB);
     ImGui::End();
 }
