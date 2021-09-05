@@ -87,6 +87,9 @@ MainInternal::MainInternal()
 
 void MainInternal::init()
 {
+    DataHash d;
+    std::cout << sizeof(DataOriginal) << std::endl;
+    std::cout << d.size << std::endl;
 }
 
 void MainInternal::loop()

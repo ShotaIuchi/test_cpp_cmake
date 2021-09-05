@@ -14,6 +14,7 @@ public:
     virtual std::string name() const = 0;
     virtual void *get(void *src) const = 0;
     virtual const std::type_info &type() const = 0;
+    virtual size_t size() const = 0;
 };
 
 template <class T>
@@ -44,14 +45,30 @@ public:
     {
         return typeid(T);
     }
+    size_t size() const override
+    {
+        return sizeof(T);
+    }
+};
+
+struct HashBalse
+{
+    std::vector<const DataTypeHashBase *> values;
+    size_t size = 0;
+
+protected:
+    template <class T>
+    void addList(T value)
+    {
+        this->values.push_back(value);
+        size += value->size();
+    }
 };
 
 struct DataHash
 {
-    struct DataTypeA_Hash
+    struct DataTypeA_Hash final : public HashBalse
     {
-        std::vector<const DataTypeHashBase *> values;
-
         DataTypeHash<int> x;
         DataTypeHash<float> y;
 
@@ -61,8 +78,8 @@ struct DataHash
               y("y", [=](void *src)
                 { return &static_cast<DataTypeA *>(src)->y; })
         {
-            this->values.push_back(&x);
-            this->values.push_back(&y);
+            addList(&x);
+            addList(&y);
         }
     };
 
@@ -71,17 +88,21 @@ struct DataHash
         struct AAA_Hash
         {
             std::vector<const DataTypeHashBase *> values;
+            size_t size = 0;
+
             DataTypeHash<int> a;
             AAA_Hash()
                 : a("a", [=](void *src)
                     { return &static_cast<DataTypeB::AAA *>(src)->a; })
             {
                 this->values.push_back(&a);
+                size += a.size();
             }
         };
         struct BBB_Hash
         {
             std::vector<const DataTypeHashBase *> values;
+            size_t size = 0;
             DataTypeHash<int> a;
             DataTypeHash<int> b;
             BBB_Hash()
@@ -92,7 +113,24 @@ struct DataHash
             {
                 this->values.push_back(&a);
                 this->values.push_back(&b);
+                size += a.size();
+                size += b.size();
             }
         };
+        size_t size = 0;
+        DataTypeB_Hash()
+        {
+            size += (AAA_Hash().size);
+            size += (BBB_Hash().size * 4);
+        }
     };
+
+    size_t size = 0;
+    DataHash()
+    {
+        size += (DataTypeA_Hash().size);
+        size += (DataTypeB_Hash().size);
+
+        assert(size == sizeof(DataOriginal));
+    }
 };
